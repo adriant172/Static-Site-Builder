@@ -56,6 +56,15 @@ class TestParentNode(unittest.TestCase):
                 ParentNode(
                     "li",
                     [
+                        ParentNode(
+                            "li",
+                            [
+                                LeafNode("ul", "Text1"),
+                                LeafNode("ul", "Text2"),
+                                LeafNode("ul", "Text3"),
+                                LeafNode("ul", "Text4"),
+                            ],
+                        ),
                         LeafNode("ul", "Text1"),
                         LeafNode("ul", "Text2"),
                         LeafNode("ul", "Text3"),
@@ -70,5 +79,5 @@ class TestParentNode(unittest.TestCase):
         result = node.to_html()
         self.assertEqual(
             result,
-            "<p><li><ul>Text1</ul><ul>Text2</ul><ul>Text3</ul><ul>Text4</ul></li>Normal text<i>italic text</i>Normal text</p>",
+            "<p><li><li><ul>Text1</ul><ul>Text2</ul><ul>Text3</ul><ul>Text4</ul></li><ul>Text1</ul><ul>Text2</ul><ul>Text3</ul><ul>Text4</ul></li>Normal text<i>italic text</i>Normal text</p>",
         )
