@@ -1,15 +1,13 @@
 """ Import Textnode class """
-from textnode import TextNode
+from textnode import TextNode, text_types
 import re 
 
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
-    text_types = ("code", "b", "i")
-    if text_type not in text_types:
-        raise ValueError("Incorrect text type. Use either code, b or i.")
+    # text_types = ("code", "b", "i")
     for node in old_nodes:
-        if not isinstance(node, TextNode):
+        if node.text_type != text_types["text"]:
             new_nodes.append(node)
             continue
         words = node.text.split(delimiter)
@@ -18,7 +16,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         for i, string in enumerate(words):
             if string == "":
                 continue
-            if i % 2 == 1: 
+            if i % 2 == 1:
                 new_nodes.append(TextNode(string, text_type))
             else:
                 new_nodes.append(TextNode(string, "text"))
@@ -46,13 +44,6 @@ def split_nodes_image(old_nodes):
         if len(images) == 0:
             new_nodes.append(node)
             continue
-        # lines = node.text.split(f"![{images[0][0]}]({images[0][1]})", 1)
-        # for i, img_tuple in enumerate(images):
-        #     new_nodes.append(TextNode(lines[0], "text"))
-        #     new_nodes.append(TextNode(images[i][0], "image", images[i][1]))
-        #     if i == len(images) - 1:
-        #         break
-        #     lines = lines[1].split(f"![{images[i + 1][0]}]({images[i + 1][1]})", 1)
         for image in images:
             lines = raw_text.split(f"![{image[0]}]({image[1]})", 1)
             if len(lines) != 2:
@@ -60,6 +51,8 @@ def split_nodes_image(old_nodes):
             new_nodes.append(TextNode(lines[0], "text"))
             new_nodes.append(TextNode(image[0], "image", image[1]))
             raw_text = lines[1]
+        if raw_text != "":
+            new_nodes.append(TextNode(raw_text, "text"))
     return new_nodes
 
 def split_nodes_links(old_nodes):
@@ -80,4 +73,16 @@ def split_nodes_links(old_nodes):
             new_nodes.append(TextNode(lines[0], "text"))
             new_nodes.append(TextNode(link[0], "link", link[1]))
             raw_text = lines[1]
+        if raw_text != "":
+            new_nodes.append(TextNode(raw_text, "text"))
     return new_nodes
+
+def text_to_textnodes(text):
+    """ Linking together functions together into a 
+    function that can convert a raw string of markdown 
+    flavored text into a list of TextNode objects"""
+    old_node = TextNode(text, text_types["text"])
+    new_nodes = [old_node]
+    result = split_nodes_links(split_nodes_image(split_nodes_delimiter(split_nodes_delimiter(split_nodes_delimiter(new_nodes, "**", "bold"),"*", "italic"),"`", "code")))
+    return result
+    # return split_nodes_links(split_nodes_image(new_nodes))

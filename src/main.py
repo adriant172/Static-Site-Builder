@@ -1,13 +1,10 @@
 from textnode import TextNode
-from inline_markdown import split_nodes_delimiter, split_nodes_image, split_nodes_links
+from inline_markdown import split_nodes_delimiter, split_nodes_image, split_nodes_links, text_to_textnodes
 from htmlnode import HTMLNode
 
 def main():
-    test_node =  TextNode(
-        '''This is text with an [link 1](https://testing.com) and another [link 2](https://further-testing.com)''', "text"
-    )
-
-    result = split_nodes_links([test_node])
+    test_text = "This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)"
+    result = text_to_textnodes(test_text)
     print(result)
 
 

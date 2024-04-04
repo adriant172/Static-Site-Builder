@@ -1,14 +1,14 @@
 import unittest
 
-from textnode import TextNode
+from textnode import TextNode, text_types
 from htmlnode import HTMLNode
-from inline_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_links
+from inline_markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_links, text_to_textnodes
 
 class TestSplitNodes(unittest.TestCase):
     """Test the split_nodes_delimiter function"""
     def test_1(self):
         """First test"""
-        test_node = TextNode("This is text with a `code block` word.", "code")
+        test_node = TextNode("This is text with a `code block` word.", "text")
         result = split_nodes_delimiter([test_node], "`","code")
         self.assertEqual(
             result,
@@ -20,22 +20,22 @@ class TestSplitNodes(unittest.TestCase):
 
         )
     def test_2(self):
-        test_node = TextNode("This is text with a `code block word.", "code")
+        test_node = TextNode("This is text with a `code block word.", "text")
         with self.assertRaises(ValueError):
             split_nodes_delimiter([test_node], "`","code")
     
     def test_3(self):
-        test_node = TextNode("This is text with a `code block` word.", "code")
-        htmlnode = HTMLNode(None, None, None,None)
-        result = split_nodes_delimiter([htmlnode,test_node], "`","code")
+        test_node = TextNode("This is text with a `code block` word.", "text")
+        test_node2 = TextNode("This is text with a `code block` word.", "code")
+        result = split_nodes_delimiter([test_node,test_node2,], "`","code")
        
         self.assertEqual(
             result,
             [
-                htmlnode,
                 TextNode("This is text with a ", "text", None),
                 TextNode("code block", "code", None),
-                TextNode(" word.", "text", None)
+                TextNode(" word.", "text", None),
+                test_node2
             ]
 
         )
@@ -93,7 +93,7 @@ class TestSplitNodesImage(unittest.TestCase):
         '''This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)''',
         "text",)
     test_node2 =  TextNode(
-        '''This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png) and one more for good measure ![third image](https://i.imgur.com/3elNhQu.png)''',
+        '''This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png) and one more for good measure ![third image](https://i.imgur.com/3elNhQu.png) and a [link 2](https://further-testing.com)''',
         "text",)
 
     def test_split_node_images1(self):
@@ -122,7 +122,8 @@ class TestSplitNodesImage(unittest.TestCase):
                     "second image", "image", "https://i.imgur.com/3elNhQu.png"
                 ),
                 TextNode(" and one more for good measure ", "text"),
-                TextNode("third image", "image", "https://i.imgur.com/3elNhQu.png")
+                TextNode("third image", "image", "https://i.imgur.com/3elNhQu.png"),
+                TextNode(" and a [link 2](https://further-testing.com)", "text", None)
             ]
 
         )
@@ -144,7 +145,8 @@ class TestSplitNodesImage(unittest.TestCase):
                     "second image", "image", "https://i.imgur.com/3elNhQu.png"
                 ),
                 TextNode(" and one more for good measure ", "text"),
-                TextNode("third image", "image", "https://i.imgur.com/3elNhQu.png")
+                TextNode("third image", "image", "https://i.imgur.com/3elNhQu.png"),
+                TextNode(" and a [link 2](https://further-testing.com)", "text", None)
             ]
         )
 
@@ -152,7 +154,7 @@ class TestSplitNodesImage(unittest.TestCase):
 
 class TestSplitNodesLinks(unittest.TestCase):
     """ This is for testing the split_nodes_links function"""
-    def test_split_nodes_links(self):
+    def test_split_nodes_link1(self):
         """ First basic test """
         test_node =  TextNode(
         '''This is text with an [link 1](https://testing.com) and another [link 2](https://further-testing.com)''',
@@ -171,7 +173,27 @@ class TestSplitNodesLinks(unittest.TestCase):
         )
             
 
+class TestTextToTestNodes(unittest.TestCase):
+    """This is for testing the text_to_textnodes function"""
+    def test_text_to_testnodes1(self):
+        test_text = """This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)"""
+        test_nodes = text_to_textnodes(test_text)
+        self.assertEqual(
+            test_nodes,
+            [
+                TextNode("This is ", text_types["text"]),
+                TextNode("text", text_types["bold"]),
+                TextNode(" with an ", text_types["text"]),
+                TextNode("italic", text_types["italic"]),
+                TextNode(" word and a ", text_types["text"]),
+                TextNode("code block", text_types["code"]),
+                TextNode(" and an ", text_types["text"]),
+                TextNode("image", text_types["image"], "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"),
+                TextNode(" and a ", text_types["text"]),
+                TextNode("link", text_types["link"], "https://boot.dev"),
+            ]
 
+        )
 
 if __name__ == "__main__":
     unittest.main()

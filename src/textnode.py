@@ -1,5 +1,21 @@
 from htmlnode import LeafNode
 
+text_types = {
+    "text": "text",
+    "bold": "bold",
+    "italic": "italic",
+    "code": "code",
+    "link": "link",
+    "image": "image"
+}
+
+text_type_text = "text"
+text_type_bold = "bold"
+text_type_italic = "italic"
+text_type_code = "code"
+text_type_link = "link"
+text_type_image = "image"
+
 class TextNode:
     def __init__(self, text, text_type, url=None):
         self.text = text
@@ -16,9 +32,9 @@ class TextNode:
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
     def text_node_to_html_node(self):
-        text_types =  ("text","bold","italic","code","link","image",)
-        if self.text_type not in text_types:
-            raise TypeError("Invalid text type.")
+        # text_types =  ("text","bold","italic","code","link","image",)
+        # if self.text_type not in text_types:
+        #     raise TypeError("Invalid text type.")
         match self.text_type:
             case "text":
                 return LeafNode(None, self.text)
@@ -35,3 +51,5 @@ class TextNode:
                     "src": self.url,
                     "alt": self.text
                 })
+            case __:
+                raise TypeError("Invalid text type.")
