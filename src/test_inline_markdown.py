@@ -67,14 +67,6 @@ class TestExtractMDImagesandLinks(unittest.TestCase):
                 ("another", "https://i.imgur.com/dfsdkjfd.png"),
             ],
         )
-
-    # def test_images2(self):
-    #     """Testing the error catching functionality"""
-    #     text ='''This is text with an [image](https://i.imgur.com/zjjcJKZ.png)
-    #      and [another](https://i.imgur.com/dfsdkjfd.png)'''
-    #     with self.assertRaises(Exception):
-    #         extract_markdown_images(text)
-
     def test_links1(self):
         """First test for extracting links"""
         text = "This is text with a [link](https://www.example.com) and [another](https://www.example.com/another)"
