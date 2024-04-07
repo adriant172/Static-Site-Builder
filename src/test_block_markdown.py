@@ -1,5 +1,5 @@
 import unittest
-from block_markdown import markdown_to_blocks
+from block_markdown import markdown_to_blocks, block_to_block_type, block_type_code, block_type_heading, block_type_ordered_list, block_type_paragraph,block_type_quote, block_type_unordered_list
 
 class TestMarkdownToBlocks(unittest.TestCase):
     """This is to test the markdown to blocks function"""
@@ -52,6 +52,21 @@ class TestMarkdownToBlocks(unittest.TestCase):
             ]
         )
 
+class TestBlock_To_Block_Type(unittest.TestCase):
+    """This is a test for the function that 
+    converts strings of markdown blocks 
+    and returns the type"""
+    def test_block_to_block_ordered_list(self):
+        """Test for unordered list block"""
+        test_block = "1.TEST\n2.Thisis\n3.AnotherTest"
+        result = block_to_block_type(test_block)
+        self.assertEqual(
+            result,
+            block_type_ordered_list
+
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
+
