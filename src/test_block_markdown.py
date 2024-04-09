@@ -65,6 +65,14 @@ class TestBlock_To_Block_Type(unittest.TestCase):
             block_type_ordered_list
 
         )
+    def test_block_to_block_code(self):
+        test_block = "```\nThis is lines of code\nThis is a test\n testing 123\n```"
+        result = block_to_block_type(test_block)
+        self.assertEqual(
+            result,
+            block_type_code
+        )
+
 
 
 if __name__ == "__main__":
