@@ -1,5 +1,15 @@
 import unittest
-from block_markdown import markdown_to_blocks, block_to_block_type, block_type_code, block_type_heading, block_type_ordered_list, block_type_paragraph,block_type_quote, block_type_unordered_list
+from block_markdown import (
+    markdown_to_blocks, 
+    block_to_block_type, 
+    block_type_code, 
+    block_type_heading, 
+    block_type_ordered_list, 
+    block_type_paragraph,
+    block_type_quote, 
+    block_type_unordered_list,
+    markdown_to_htmlnode
+    )
 
 class TestMarkdownToBlocks(unittest.TestCase):
     """This is to test the markdown to blocks function"""
@@ -73,6 +83,17 @@ class TestBlock_To_Block_Type(unittest.TestCase):
             block_type_code
         )
 
+class Test_markdown_blocks_to_html_node(unittest.TestCase):
+    def test_paragraphs(self):
+        markdown = """This is a **bolded** paragraph text. 
+        Meant for testing. That has some *stylized* text for additional 
+        `testing purposes`. Hopefully this is a good test."""
+        test_node = markdown_to_htmlnode(markdown)
+        html_result = test_node.to_html()
+        self.assertEqual(
+            html_result,
+            "<div><p>This is a <b>bolded</b> paragraph text. Meant for testing. That has some <i>stylized</i> text for additional <code>testing purposes</code>. Hopefully this is a good test.</p></div>"
+        )
 
 
 if __name__ == "__main__":
