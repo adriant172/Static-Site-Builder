@@ -1,4 +1,5 @@
 from block_markdown import markdown_to_htmlnode
+from pathlib import Path
 import os
 
 
@@ -12,6 +13,7 @@ def extract_title(markdown):
     raise ValueError("No title exists.")
 
 def generate_page(from_path, template_path, dest_path):
+    """Generates a single html page from a markdown file"""
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     markdown_file = open(from_path, 'r', encoding="utf-8")
     markdown = markdown_file.read()
@@ -30,5 +32,20 @@ def generate_page(from_path, template_path, dest_path):
     destination_file.close()
     print(new_page)
 
-
-    
+def generates_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    """Generates multiple html pages from multiple markdown files nested within
+      all sub-directories of the targeted directory"""
+    dir_path_object = Path(dir_path_content)
+    if dir_path_object.is_dir() and dir_path_object.exists():
+        dir_contents = os.listdir(dir_path_content)
+        for item in dir_contents:
+            source_path = os.path.join(dir_path_content, item)
+            if os.path.isfile(source_path) and item.endswith(".md"):
+                file = item[:-2]
+                file += "html"
+                destination_path =os.path.join(dest_dir_path, file)
+                generate_page(source_path,template_path, destination_path)
+            else:
+                destination_path =os.path.join(dest_dir_path, item)
+                os.mkdir(destination_path)
+                generates_pages_recursive(source_path, template_path, destination_path)
